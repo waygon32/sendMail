@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import com.sun.management.OperatingSystemMXBean;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -8,20 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.mail.MessagingException;
-import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * https://stackoverflow.com/questions/46939455/spring-boot-gradle-how-to-build-executable-jar
+ * Build jar : $./gradlew bootJar
+ * Build war : $./gradlew bootWar
+ */
 @SpringBootApplication
 @EnableScheduling
 public class DemoApplication {
@@ -43,19 +42,7 @@ public class DemoApplication {
     @Value("${mimimum.balance}")
     private Double mimumBalanceVtlBulk;
 
-    private static final String XML_BALANCE_VTL_BULK = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:impl=\"http://impl.bulkSms.ws/\">\n" +
-            "   <soapenv:Header/>\n" +
-            "   <soapenv:Body>\n" +
-            "      <impl:checkBalance>\n" +
-            "         <!--Optional:-->\n" +
-            "         <User>smsvnet</User>\n" +
-            "         <!--Optional:-->\n" +
-            "         <Password>vnet@123</Password>\n" +
-            "         <!--Optional:-->\n" +
-            "         <CPCode>SMSVNET</CPCode>\n" +
-            "      </impl:checkBalance>\n" +
-            "   </soapenv:Body>\n" +
-            "</soapenv:Envelope>";
+    private static final String XML_BALANCE_VTL_BULK = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:impl=\"http://impl.bulkSms.ws/\">\n" + "   <soapenv:Header/>\n" + "   <soapenv:Body>\n" + "      <impl:checkBalance>\n" + "         <!--Optional:-->\n" + "         <User>smsvnet</User>\n" + "         <!--Optional:-->\n" + "         <Password>vnet@123</Password>\n" + "         <!--Optional:-->\n" + "         <CPCode>SMSVNET</CPCode>\n" + "      </impl:checkBalance>\n" + "   </soapenv:Body>\n" + "</soapenv:Envelope>";
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
@@ -83,20 +70,20 @@ public class DemoApplication {
     void scheduleCheckBalanceViettelBulk() throws Exception {
         checkBalanceViettelBulk();
     }
+
     void checkBalanceViettelBulk() {
         PostMethod post = new PostMethod(urlVtlBulk);
         try {
             StringRequestEntity requestEntity = new StringRequestEntity(XML_BALANCE_VTL_BULK);
             post.setRequestEntity(requestEntity);
-            post.setRequestHeader("Content-type",
-                    "text/xml; charset=ISO-8859-1");
+            post.setRequestHeader("Content-type", "text/xml; charset=ISO-8859-1");
             HttpClient httpclient = new HttpClient();
             int result = httpclient.executeMethod(post);
             System.out.println("Response status code: " + result);
             System.out.println("Response body: ");
 
             String responseApi = post.getResponseBodyAsString();
-//            System.out.println(responseApi);
+            System.out.println(responseApi);
             String strBalance = getByTagXml("balance", responseApi);
             if (strBalance != null) {
                 Double balance = Double.valueOf(strBalance);
