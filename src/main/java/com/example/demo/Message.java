@@ -43,6 +43,7 @@ public class Message {
             return false;
         }
     }
+    /*
     @Bean
     public SimpleMailMessage emailMessage() throws IOException {
 //        Properties mailServerProperties;
@@ -64,9 +65,11 @@ public class Message {
         }
 
         mailMessage.setTo("truongthien2310@gmail.com");
-        mailMessage.setFrom("huyenhoac23@gmail.com");
+//        mailMessage.setFrom("huyenhoac23@gmail.com");
         mailMessage.setSubject("System status");
         mailMessage.setText("CPU su dung: " +cpuUsage + "\n"+ "RAM su dung: " +memoryUsage + "\n" + "O nho con trong: " + freeSpace + "\n"+ statusUrl);
         return mailMessage;
     }
+
+     */
 }
